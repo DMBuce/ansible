@@ -81,6 +81,15 @@ def query_package(module, name, state="installed"):
         if rc == 0:
             return True
 
+        # check if name is a package group
+        is_group = os.system("pacman -Sgq | grep %s" % (name))
+        if is_group == 0:
+            # returns 0 if all packages belonging to the group is installed,
+            # 1 if any packages are missing
+            rc = os.system("pacman -Q $(pacman -Sgq %s)" % (name))
+            if rc == 0:
+                return True
+
         return False
 
 
